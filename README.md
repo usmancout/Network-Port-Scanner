@@ -1,1 +1,1 @@
-![Alt Text](Screenshot from 2025-11-14 20-39-35.png)
+![Network Scanner UI](Screenshot%20from%202025-11-14%2020-39-35.png)
