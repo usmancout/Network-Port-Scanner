@@ -1,0 +1,6 @@
+Flask==3.0.0
+flask-socketio==5.3.5
+python-nmap==0.7.1
+scapy==2.5.0
+python-socketio==5.10.0
+eventlet==0.33.3

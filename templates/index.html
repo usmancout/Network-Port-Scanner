@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Security Scanner & Firewall Visualizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>Network Security Scanner</h1>
+            </div>
+            <div class="header-info">
+                <span id="connection-status" class="status-badge disconnected">
+                    <i class="fas fa-circle"></i> Disconnected
+                </span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel - Scanner -->
+            <div class="panel scanner-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-radar"></i> Port Scanner</h2>
+                </div>
+                
+                <div class="scanner-controls">
+                    <div class="form-group">
+                        <label for="target">Target IP/Hostname:</label>
+                        <input type="text" id="target" placeholder="e.g., 192.168.1.1 or scanme.nmap.org" value="127.0.0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="scan-type">Scan Type:</label>
+                        <select id="scan-type">
+                            <option value="TCP SYN">TCP SYN Scan</option>
+                            <option value="Full Connect" selected>Full Connect Scan</option>
+                            <option value="UDP">UDP Scan</option>
+                            <option value="Quick Scan">Quick Scan (Common Ports)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="port-range">Port Range:</label>
+                        <input type="text" id="port-range" placeholder="e.g., 1-1000" value="1-1000">
+                    </div>
+                    
+                    <button id="start-scan-btn" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Start Scan
+                    </button>
+                    <button id="clear-results-btn" class="btn btn-secondary">
+                        <i class="fas fa-trash"></i> Clear Results
+                    </button>
+                </div>
+                
+                <div class="scan-status" id="scan-status">
+                    <i class="fas fa-info-circle"></i> Ready to scan
+                </div>
+                
+                <div class="results-container">
+                    <div class="results-header">
+                        <h3>Scan Results</h3>
+                        <span id="results-count" class="badge">0 ports found</span>
+                    </div>
+                    <div class="table-container">
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>IP Address</th>
+                                    <th>Port</th>
+                                    <th>Protocol</th>
+                                    <th>State</th>
+                                    <th>Service</th>
+                                    <th>Version</th>
+                                </tr>
+                            </thead>
+                            <tbody id="results-tbody">
+                                <tr class="no-results">
+                                    <td colspan="6">No scan results yet. Start a scan to see results.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Firewall -->
+            <div class="panel firewall-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-fire"></i> Firewall Simulator</h2>
+                </div>
+                
+                <!-- Firewall Rule Creation -->
+                <div class="firewall-controls">
+                    <h3>Create Firewall Rule</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fw-action">Action:</label>
+                            <select id="fw-action">
+                                <option value="allow">Allow</option>
+                                <option value="deny">Deny</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fw-ip">IP Address:</label>
+                            <input type="text" id="fw-ip" placeholder="* or 192.168.1.1" value="*">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fw-port">Port:</label>
+                            <input type="text" id="fw-port" placeholder="* or 80 or 1-1000" value="*">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fw-protocol">Protocol:</label>
+                            <select id="fw-protocol">
+                                <option value="*">All</option>
+                                <option value="TCP">TCP</option>
+                                <option value="UDP">UDP</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fw-priority">Priority (lower = higher priority):</label>
+                        <input type="number" id="fw-priority" value="100" min="1" max="1000">
+                    </div>
+                    
+                    <button id="add-rule-btn" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Add Rule
+                    </button>
+                </div>
+                
+                <!-- Current Firewall Rules -->
+                <div class="rules-container">
+                    <h3>Active Firewall Rules</h3>
+                    <div id="rules-list" class="rules-list">
+                        <div class="no-rules">No firewall rules configured.</div>
+                    </div>
+                </div>
+                
+                <!-- Traffic Test -->
+                <div class="traffic-test">
+                    <h3>Test Traffic</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="test-ip" placeholder="IP Address" value="192.168.1.1">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="test-port" placeholder="Port" value="80">
+                        </div>
+                        <div class="form-group">
+                            <select id="test-protocol">
+                                <option value="TCP">TCP</option>
+                                <option value="UDP">UDP</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button id="test-traffic-btn" class="btn btn-info">
+                        <i class="fas fa-flask"></i> Test Traffic
+                    </button>
+                    <div id="test-result" class="test-result"></div>
+                </div>
+                
+                <!-- Traffic Visualization -->
+                <div class="traffic-viz">
+                    <h3>Traffic Flow Visualization</h3>
+                    <div id="traffic-diagram" class="traffic-diagram">
+                        <div class="flow-item">
+                            <div class="flow-source">
+                                <i class="fas fa-laptop"></i>
+                                <span>Source</span>
+                            </div>
+                            <div class="flow-arrow" id="flow-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <div class="flow-firewall">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Firewall</span>
+                            </div>
+                            <div class="flow-arrow" id="flow-arrow-2">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <div class="flow-destination">
+                                <i class="fas fa-server"></i>
+                                <span>Destination</span>
+                            </div>
+                        </div>
+                        <div class="flow-status" id="flow-status">Awaiting traffic test...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
